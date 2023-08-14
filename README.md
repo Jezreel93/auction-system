@@ -19,9 +19,14 @@ npm i -g @nestjs/cli
 docker-compose up -d
 ```
 
-5. Al iniciar la aplicación carga por defecto 1 subasta en curso con monto 0.
+5. Cargar aplicacion
+```
+http://localhost:3000
+```
 
-6. El Workflow ID indica el estado de la oferta, para ver el estado actual/final se puede consultar el siguiente endpoint:
+6. Al iniciar la aplicación carga por defecto 1 subasta en curso con monto 0.
+
+7. El Workflow ID indica el estado de la oferta, para ver el estado actual/final se puede consultar el siguiente endpoint:
 ```
 curl --location --request GET 'localhost:3000/workflow/{workflowId}'
 ```
