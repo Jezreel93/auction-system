@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auction System</title>
+</head>
+
+<body>
+
+  <h2>Auction System</h2>
+
+  <div>
+    <h3>Client Details:</h3>
+    <p>Client ID: <span id="clientIdValue"></span></p>
+    <p>Workflow ID: <span id="workflowIdValue"></span></p>
+    <p>Auction ID: <span id="auctionIdValue"></span></p>
+  </div>
+
+  <div>
+    <label for="bidAmount">Place your bid:</label>
+    <input type="number" id="bidAmount" min="1" step="0.01">
+    <button onclick="placeBid()">Place Bid</button>
+  </div>
+
+  <div>
+    <h3>Current Highest Bid:</h3>
+    <span id="highestBidValue">0</span>
+  </div>
+
+  <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+    integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+    crossorigin="anonymous"></script>
+
+  <script>
+    const clientId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    const auctionId = '64d716d2a496865830e434a3';
+
+    document.getElementById('clientIdValue').innerText = clientId;
+    document.getElementById('auctionIdValue').innerText = auctionId;
+
+    const socket = io('http://localhost:3000');
+
+    socket.on('auction.highest_bid', function (data) {
+      const { amount } = data;
+      
+      document.getElementById('highestBidValue').innerText = amount;
+      alert(`New highest bid: ${amount}`);
+    })
+
+    socket.on('bid-placed', function (data) {
+      const workflowId = data;
+      document.getElementById('workflowIdValue').innerText = workflowId;
+    })
+
+    socket.on('get-result', function (data) {
+      const workflowId = data;
+      alert("Proccesed!");
+    })
+
+    function placeBid() {
+
+      const bidAmount = document.getElementById('bidAmount').value;
+
+      if (bidAmount && Number(bidAmount) > 0) {
+
+        socket.emit('post-bid', JSON.stringify({
+          bidderId: clientId,
+          auctionId: auctionId,
+          amount: Number(bidAmount)
+        }));
+
+      } else {
+        alert("Please enter a valid bid amount.");
+      }
+    }
+  </script>
+
+</body>
+
+</html>
